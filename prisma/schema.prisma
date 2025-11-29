@@ -1,0 +1,51 @@
+// This is your Prisma schema file for the database
+// Prisma will automatically create and manage the database for you
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  avatarUrl String?
+  isAdmin   Boolean  @default(false)
+  isPaused  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  artworks  Artwork[]
+  folders   Folder[]
+}
+
+model Folder {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  artworks    Artwork[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Artwork {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  filename    String
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  folderId    String?
+  folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
