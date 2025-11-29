@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import SafeImage from '@/components/SafeImage'
 import Link from 'next/link'
 
 interface Artwork {
@@ -331,9 +331,9 @@ export default function PortalPage() {
             Profile Picture
           </h2>
           <div className="flex items-center space-x-6">
-            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-dark-card border border-dark-border">
               {user?.avatarUrl ? (
-                <Image
+                <SafeImage
                   src={user.avatarUrl}
                   alt="Avatar"
                   fill
@@ -341,7 +341,7 @@ export default function PortalPage() {
                   sizes="96px"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-gold">
+                <div className="w-full h-full flex items-center justify-center text-xl sm:text-2xl font-bold text-pink-accent">
                   {user?.name?.charAt(0).toUpperCase() || 'U'}
                 </div>
               )}
@@ -358,7 +358,7 @@ export default function PortalPage() {
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-md file:border-0
                     file:text-sm file:font-semibold
-                    file:bg-gold file:text-black
+                    file:bg-pink-accent file:text-black
                     hover:file:opacity-90
                     disabled:opacity-50 disabled:cursor-not-allowed"
                 />
@@ -390,7 +390,7 @@ export default function PortalPage() {
               onClick={() => setActiveTab('artworks')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'artworks'
-                  ? 'border-gold text-gold'
+                  ? 'border-pink-accent text-pink-accent'
                   : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
               }`}
             >
@@ -400,7 +400,7 @@ export default function PortalPage() {
               onClick={() => setActiveTab('folders')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'folders'
-                  ? 'border-gold text-gold'
+                  ? 'border-pink-accent text-pink-accent'
                   : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
               }`}
             >
@@ -593,13 +593,13 @@ export default function PortalPage() {
                   key={artwork.id}
                   className="dark-card rounded-lg overflow-hidden relative group image-container"
                 >
-                  <div className="relative w-full h-48">
-                    <Image
+                  <div className="relative w-full h-40 sm:h-48">
+                    <SafeImage
                       src={artwork.imageUrl}
                       alt={artwork.title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     {/* Delete button overlay */}
                     <button
@@ -639,7 +639,7 @@ export default function PortalPage() {
                         value={artwork.folderId || ''}
                         onChange={(e) => handleMoveArtwork(artwork.id, e.target.value || null)}
                         disabled={movingId === artwork.id}
-                        className="w-full text-xs px-2 py-1 border border-dark-border rounded-md text-foreground bg-dark-card focus:outline-none focus:ring-1 focus:ring-gold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full text-xs px-2 py-1 border border-dark-border rounded-md text-foreground bg-dark-card focus:outline-none focus:ring-1 focus:ring-pink-accent disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <option value="">No folder (Main Gallery)</option>
                         {folders.map((folder) => (

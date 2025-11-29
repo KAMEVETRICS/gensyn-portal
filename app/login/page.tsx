@@ -52,7 +52,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
             Or{' '}
-            <Link href="/signup" className="font-medium text-gold hover:opacity-80">
+            <Link href="/signup" className="font-medium text-pink-accent hover:opacity-80">
               create a new account
             </Link>
           </p>
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-dark-border placeholder-gray-500 text-foreground bg-dark-card rounded-t-md focus:outline-none focus:ring-gold focus:border-gold focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-dark-border placeholder-gray-500 text-foreground bg-dark-card rounded-t-md focus:outline-none focus:ring-pink-accent focus:border-pink-accent focus:z-10 sm:text-sm"
                 placeholder="Email address"
               />
             </div>

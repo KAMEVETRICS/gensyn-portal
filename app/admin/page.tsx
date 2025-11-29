@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import SafeImage from '@/components/SafeImage'
 
 interface User {
   id: string
@@ -220,12 +220,12 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
             Admin Panel
           </h1>
-          <p className="text-gray-400">
+          <p className="text-sm sm:text-base text-gray-400">
             Manage users, artworks, and platform content
           </p>
         </div>
@@ -244,13 +244,13 @@ export default function AdminPage() {
         )}
 
         {/* Tabs */}
-        <div className="border-b border-dark-border mb-6">
-          <nav className="-mb-px flex space-x-8">
+        <div className="border-b border-dark-border mb-4 sm:mb-6">
+          <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
             <button
               onClick={() => setActiveTab('users')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
                 activeTab === 'users'
-                  ? 'border-gold text-gold'
+                  ? 'border-pink-accent text-pink-accent'
                   : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
               }`}
             >
@@ -258,9 +258,9 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => setActiveTab('artworks')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
                 activeTab === 'artworks'
-                  ? 'border-gold text-gold'
+                  ? 'border-pink-accent text-pink-accent'
                   : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
               }`}
             >
@@ -272,20 +272,20 @@ export default function AdminPage() {
         {/* Users Tab */}
         {activeTab === 'users' && (
           <div>
-            <div className="overflow-x-auto">
-              <table className="w-full dark-card rounded-lg overflow-hidden">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full dark-card rounded-lg overflow-hidden min-w-full">
                 <thead>
                   <tr className="border-b border-dark-border">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:table-cell">
                       Content
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -293,11 +293,11 @@ export default function AdminPage() {
                 <tbody className="divide-y divide-dark-border">
                   {users.map((user) => (
                     <tr key={user.id} className="hover:bg-dark-card/50">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-dark-card border border-dark-border mr-3">
                             {user.avatarUrl ? (
-                              <Image
+                              <SafeImage
                                 src={user.avatarUrl}
                                 alt={user.name}
                                 fill
@@ -305,7 +305,7 @@ export default function AdminPage() {
                                 sizes="40px"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-sm font-bold text-gold">
+                              <div className="w-full h-full flex items-center justify-center text-sm font-bold text-pink-accent">
                                 {user.name.charAt(0).toUpperCase()}
                               </div>
                             )}
@@ -314,7 +314,7 @@ export default function AdminPage() {
                             <div className="text-sm font-medium text-foreground">
                               {user.name}
                               {user.isAdmin && (
-                                <span className="ml-2 px-2 py-0.5 text-xs bg-gold text-black rounded">
+                                <span className="ml-2 px-2 py-0.5 text-xs bg-pink-accent text-black rounded">
                                   Admin
                                 </span>
                               )}
@@ -323,7 +323,7 @@ export default function AdminPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         {user.isPaused ? (
                           <span className="px-2 py-1 text-xs font-medium bg-red-900/20 text-red-400 rounded">
                             Paused
@@ -334,10 +334,10 @@ export default function AdminPage() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-400 hidden sm:table-cell">
                         {user._count.artworks} artworks • {user._count.folders} folders
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium space-x-1 sm:space-x-2">
                         <button
                           onClick={() => handleTogglePause(user.id, user.isPaused)}
                           disabled={updatingUserId === user.id}
@@ -393,13 +393,13 @@ export default function AdminPage() {
                   key={artwork.id}
                   className="dark-card rounded-lg overflow-hidden relative group image-container"
                 >
-                  <div className="relative w-full h-64">
-                    <Image
+                  <div className="relative w-full h-48 sm:h-64">
+                    <SafeImage
                       src={artwork.imageUrl}
                       alt={artwork.title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     {artwork.creator.isPaused && (
                       <div className="absolute top-2 left-2 bg-red-900/80 text-red-200 px-2 py-1 rounded text-xs">

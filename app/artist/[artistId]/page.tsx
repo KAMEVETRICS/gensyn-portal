@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import Image from 'next/image'
+import SafeImage from '@/components/SafeImage'
 import { notFound } from 'next/navigation'
 import DownloadButton from '@/components/DownloadButton'
 
@@ -73,13 +73,13 @@ export default async function ArtistPage({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Artist Header */}
-        <div className="dark-card rounded-lg p-8 mb-8">
-          <div className="flex items-center">
-            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-6">
+        <div className="dark-card rounded-lg p-4 sm:p-8 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-dark-card border border-dark-border mb-4 sm:mb-0 sm:mr-6">
               {artist.avatarUrl ? (
-                <Image
+                <SafeImage
                   src={artist.avatarUrl}
                   alt={artist.name}
                   fill
@@ -87,19 +87,19 @@ export default async function ArtistPage({
                   sizes="96px"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-500 dark:text-gray-400">
+                <div className="w-full h-full flex items-center justify-center text-2xl sm:text-4xl font-bold text-pink-accent">
                   {artist.name.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
                 {artist.name}
               </h1>
-              <p className="text-gray-400 mb-4">
+              <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-4">
                 {artist._count.artworks} artwork{artist._count.artworks !== 1 ? 's' : ''} • {artist._count.folders} folder{artist._count.folders !== 1 ? 's' : ''}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Joined {new Date(artist.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -107,8 +107,8 @@ export default async function ArtistPage({
         </div>
 
         {/* Folders */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4 sm:mb-6">
             Art Folders
           </h2>
 
@@ -147,13 +147,13 @@ export default async function ArtistPage({
 
         {/* All Artworks */}
         <div>
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
+          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4 sm:mb-6">
             All Artworks ({artist.artworks.length})
           </h2>
 
           {artist.artworks.length === 0 ? (
-            <div className="text-center py-12 dark-card rounded-lg">
-              <p className="text-gray-400">
+            <div className="text-center py-8 sm:py-12 dark-card rounded-lg">
+              <p className="text-sm sm:text-base text-gray-400">
                 This artist hasn't uploaded any artwork yet.
               </p>
             </div>
@@ -164,16 +164,16 @@ export default async function ArtistPage({
                   key={artwork.id}
                   className="dark-card rounded-lg overflow-hidden relative group image-container"
                 >
-                  <div className="relative w-full h-64">
-                    <Image
+                  <div className="relative w-full h-48 sm:h-64">
+                    <SafeImage
                       src={artwork.imageUrl}
                       alt={artwork.title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     {/* Download button overlay */}
-                    <div className="absolute top-2 right-2">
+                    <div className="absolute top-2 right-2 z-10">
                       <DownloadButton
                         imageUrl={artwork.imageUrl}
                         title={artwork.title}
@@ -181,19 +181,19 @@ export default async function ArtistPage({
                       />
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                  <div className="p-3 sm:p-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">
                       {artwork.title}
                     </h3>
                     {artwork.description && (
-                      <p className="text-sm text-gray-400 mb-2 line-clamp-2">
+                      <p className="text-xs sm:text-sm text-gray-400 mb-2 line-clamp-2">
                         {artwork.description}
                       </p>
                     )}
                     {artwork.folder ? (
                       <Link
                         href={`/folder/${artwork.folder.id}`}
-                        className="text-xs text-gold hover:underline mt-1 block"
+                        className="text-xs text-pink-accent hover:underline mt-1 block"
                       >
                         in {artwork.folder.name}
                       </Link>

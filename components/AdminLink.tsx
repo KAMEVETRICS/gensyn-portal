@@ -33,7 +33,7 @@ export default function AdminLink() {
   return (
     <Link
       href="/admin"
-      className="text-gray-300 hover:text-gold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+      className="text-gray-300 hover:text-pink-accent px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
     >
       Admin
     </Link>
