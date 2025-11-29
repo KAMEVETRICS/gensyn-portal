@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/jwt'
-import { unlink } from 'fs/promises'
-import { join } from 'path'
+import { deleteFromCloudinary } from '@/lib/cloudinary'
 
 // GET - Get single artwork
 export async function GET(
@@ -184,10 +183,18 @@ export async function DELETE(
       )
     }
 
-    // Delete the file from the filesystem
+    // Delete the file from storage (Cloudinary or local)
     try {
-      const filepath = join(process.cwd(), 'public', artwork.imageUrl)
-      await unlink(filepath)
+      if (artwork.imageUrl.startsWith('http')) {
+        // Cloudinary URL
+        await deleteFromCloudinary(artwork.imageUrl)
+      } else {
+        // Local file
+        const { unlink } = await import('fs/promises')
+        const { join } = await import('path')
+        const filepath = join(process.cwd(), 'public', artwork.imageUrl)
+        await unlink(filepath)
+      }
     } catch (fileError) {
       // Log error but continue with database deletion
       console.error('Error deleting file:', fileError)

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
 import { getCurrentUser } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
+import { uploadToCloudinary } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,25 +57,30 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads')
-    try {
-      await mkdir(uploadsDir, { recursive: true })
-    } catch (error) {
-      // Directory might already exist
-    }
-
     // Generate unique filename
     const timestamp = Date.now()
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
     const filename = `${timestamp}-${originalName}`
-    const filepath = join(uploadsDir, filename)
 
-    // Save file
-    await writeFile(filepath, buffer)
-
-    // Return file URL
-    const imageUrl = `/uploads/${filename}`
+    // Upload to Cloudinary if configured, otherwise use local storage
+    let imageUrl: string
+    if (process.env.CLOUDINARY_CLOUD_NAME) {
+      // Upload to Cloudinary
+      imageUrl = await uploadToCloudinary(buffer, 'artworks', filename)
+    } else {
+      // Fallback to local storage (for development)
+      const { writeFile, mkdir } = await import('fs/promises')
+      const { join } = await import('path')
+      const uploadsDir = join(process.cwd(), 'public', 'uploads')
+      try {
+        await mkdir(uploadsDir, { recursive: true })
+      } catch (error) {
+        // Directory might already exist
+      }
+      const filepath = join(uploadsDir, filename)
+      await writeFile(filepath, buffer)
+      imageUrl = `/uploads/${filename}`
+    }
 
     return NextResponse.json({
       success: true,

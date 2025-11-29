@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
 import { getCurrentUser } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
+import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,25 +47,50 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Create avatars directory if it doesn't exist
-    const avatarsDir = join(process.cwd(), 'public', 'uploads', 'avatars')
-    try {
-      await mkdir(avatarsDir, { recursive: true })
-    } catch (error) {
-      // Directory might already exist
-    }
+    // Get current user to delete old avatar
+    const currentUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      select: { avatarUrl: true },
+    })
 
     // Generate unique filename
     const timestamp = Date.now()
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
     const filename = `${timestamp}-${originalName}`
-    const filepath = join(avatarsDir, filename)
 
-    // Save file
-    await writeFile(filepath, buffer)
-
-    // Return file URL
-    const avatarUrl = `/uploads/avatars/${filename}`
+    // Upload to Cloudinary if configured, otherwise use local storage
+    let avatarUrl: string
+    if (process.env.CLOUDINARY_CLOUD_NAME) {
+      // Delete old avatar from Cloudinary if it exists
+      if (currentUser?.avatarUrl && currentUser.avatarUrl.startsWith('http')) {
+        await deleteFromCloudinary(currentUser.avatarUrl)
+      }
+      // Upload to Cloudinary
+      avatarUrl = await uploadToCloudinary(buffer, 'avatars', filename)
+    } else {
+      // Fallback to local storage (for development)
+      const { writeFile, mkdir } = await import('fs/promises')
+      const { join } = await import('path')
+      const avatarsDir = join(process.cwd(), 'public', 'uploads', 'avatars')
+      try {
+        await mkdir(avatarsDir, { recursive: true })
+      } catch (error) {
+        // Directory might already exist
+      }
+      // Delete old local avatar if it exists
+      if (currentUser?.avatarUrl && !currentUser.avatarUrl.startsWith('http')) {
+        try {
+          const { unlink } = await import('fs/promises')
+          const oldPath = join(process.cwd(), 'public', currentUser.avatarUrl)
+          await unlink(oldPath)
+        } catch (error) {
+          // Ignore if file doesn't exist
+        }
+      }
+      const filepath = join(avatarsDir, filename)
+      await writeFile(filepath, buffer)
+      avatarUrl = `/uploads/avatars/${filename}`
+    }
 
     // Update user's avatar in database
     await prisma.user.update({
